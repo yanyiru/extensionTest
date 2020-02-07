@@ -1,0 +1,214 @@
+<!DOCTYPE>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../lib/material/css/material.light_blue-blue.min.css"/>
+    <link rel="stylesheet" href="popup.css"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script type="text/javascript" src="../lib/jquery-3.1.0.min.js"></script>
+    <script type="text/javascript" src="../lib/sortable/js/html.sortable.min.js"></script>
+    <script type="text/javascript" src="../lib/material/js/material.min.js"></script>
+    <script type="text/javascript" src="../lib/chrome-Storage-largeSync.min.js"></script>
+    <script type="text/javascript" src="entities.js"></script>
+    <script type="text/javascript" src="storage.js"></script>
+    <script type="text/javascript" src="saved-groups.js"></script>
+    <script type="text/javascript" src="chrome-tabs.js"></script>
+    <script type="text/javascript" src="popup.js"></script>
+    <!--<script type="text/javascript" src="localize.js"></script>-->
+
+    <title></title>
+</head>
+<body>
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+    <header class="mdl-layout__header mdl-layout__header--scroll mdl-color--primary">
+        <div class="mdl-layout__header-row">
+            <div class="mdl-layout__tab-bar-button mdl-layout__tab-bar-left-button" id="backward-to-main">
+                <i class="material-icons">chevron_left</i>
+            </div>
+            <h4 id="header-text">Saved Groups</h4>
+            <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-shadow--4dp mdl-color--accent" id="add-group" data-upgraded=",MaterialButton,MaterialRipple">
+                <i class="material-icons add" role="presentation">add</i>
+                <span class="visuallyhidden">Add</span>
+                <span class="mdl-button__ripple-container">
+                    <span class="mdl-ripple"></span>
+                </span>
+            </button>
+        </div>
+    </header>
+
+    <main class="mdl-layout__content">
+        <section class="mdl-layout__tab-panel is-active" id="saved-group-tab">
+            <div class="page-content">
+
+                <div id="link-list-row-template" class="mdl-cell mdl-cell--6-col mdl-grid link-list-row" hidden="hidden">
+                    <div class="mdl-cell mdl-cell--3-col link-list-name-wrap">
+                        <img class="links-list-image" />
+                        <a class="link-list-name" target="_blank"></a>
+                    </div>
+                    <div class="mdl-cell mdl-cell--1-col text-align-right links-action-buttons">
+                        <button class="mdl-button mdl-js-button mdl-button--icon">
+                            <i class="material-icons link-list-remove">close</i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="SavedTabs" class="defaultOpen tabcontent ">
+                    <div class="search-filter">
+                        <i class="material-icons">search</i>
+                        <input class="group-name" type="text" maxlength="100" placeholder="Search" id="saved-group-filter">
+                    </div>
+
+
+                    <div id="saved-group-template" class="saved-group-wrapper mdl-grid mdl-grid--no-spacing " hidden="hidden">
+                            <div class="mdl-cell mdl-cell--6-col mdl-grid mdl-grid--no-spacing saved-group padding-10 hover-grey" >
+                                <div class="mdl-cell mdl-cell--2-col  text-align-left collapse-expand-wrapper">
+                                    <!--<button class="mdl-button mdl-js-button mdl-button&#45;&#45;icon ">-->
+                                        <!--<i class="material-icons saved-group-link-list expand ">keyboard_arrow_down</i>-->
+                                        <!--<i class="material-icons saved-group-link-list collaps ">keyboard_arrow_up</i>-->
+                                    <!--</button>-->
+                                    <button class="mdl-button mdl-js-button mdl-button--icon expand-wrapper">
+                                        <i class="material-icons saved-group-link-list-arrow expand">keyboard_arrow_down</i>
+                                    </button>
+                                    <button class="mdl-button mdl-js-button mdl-button--icon collapse-wrapper">
+                                        <i class="material-icons saved-group-link-list-arrow collapse">keyboard_arrow_up</i>
+                                    </button>
+                                    <div class="saved-group-name"></div>
+                                </div>
+                                <div class="mdl-cell mdl-cell--2-col text-align-right group-action-buttons">
+                                    <!--<button class="mdl-button mdl-js-button mdl-button&#45;&#45;icon">-->
+                                        <!--<i class="material-icons">mode_edit</i>-->
+                                    <!--</button>-->
+                                    <button title="Open in browser" class="mdl-button mdl-js-button mdl-button--icon">
+                                        <i class="material-icons saved-group-open">open_in_browser</i>
+                                    </button>
+                                    <button title="Open in new window" class="mdl-button mdl-js-button mdl-button--icon">
+                                        <i class="material-icons saved-group-open-in-new saved-group-open">open_in_new</i>
+                                    </button>
+                                    <button class="mdl-button mdl-js-button mdl-button--icon saved-group-remove-button">
+                                        <i class="material-icons saved-group-remove">delete</i>
+                                    </button>
+                                    <!--<button class="mdl-button mdl-js-button mdl-button&#45;&#45;icon saved-group-options-wrapper">-->
+                                        <!--<i class="material-icons saved-group-options">more_vert</i>-->
+                                    <!--</button>-->
+
+                                </div>
+                            </div>
+
+                            <div class="saved-group-links-list mdl-cell mdl-cell--6-col" >
+                                <div  class="mdl-cell mdl-cell--6-col mdl-grid add-new-link" >
+                                    <div class="mdl-cell mdl-cell--3-col">
+                                        <button id = "more-action-menu" class="mdl-button mdl-js-button mdl-button--icon">
+                                            <i class="material-icons">add</i>
+                                        </button>
+                                        <p class="">Add more links</p>
+                                    </div>
+                                    <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect"
+                                        for="more-action-menu">
+                                        <li class="mdl-menu__item">Some Action</li>
+                                        <li class="mdl-menu__item mdl-menu__item--full-bleed-divider">Another Action</li>
+                                        <li disabled class="mdl-menu__item">Disabled Action</li>
+                                        <li class="mdl-menu__item">Yet Another Action</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div id="saved-group-list">
+
+                        </div>
+                    <!--<table class="mdl-data-table mdl-js-data-table  group-table">-->
+                        <!--<div id="saved-group-template" hidden="hidden">-->
+                            <!--<tr class="saved-group">-->
+                                <!--<td class="text-align-left">-->
+                                    <!--<div>-->
+                                        <!--<button class="mdl-button mdl-js-button mdl-button&#45;&#45;icon">-->
+                                            <!--<i class="material-icons saved-group-link-list expand">keyboard_arrow_down</i>-->
+                                            <!--<i class="material-icons saved-group-link-list collaps">keyboard_arrow_up</i>-->
+                                        <!--</button>-->
+                                        <!--<p class="saved-group-name"></p>-->
+                                    <!--</div>-->
+                                <!--</td>-->
+                                <!--<td>-->
+                                    <!--<button class="mdl-button mdl-js-button mdl-button&#45;&#45;icon">-->
+                                        <!--<i class="material-icons saved-group-remove">delete</i>-->
+                                    <!--</button>-->
+                                <!--</td>-->
+                            <!--</tr>-->
+                        <!--</div>-->
+                        <!--<tbody id="saved-group-list">-->
+
+                        <!--</tbody>-->
+                    <!--</table>-->
+                    <div class='not-found' style="display: none">
+                        <div>
+                            <i class="material-icons">search</i>
+                            <p>No saved groups found!</p>
+                            <p>Click "+" to create new</p>
+                        </div>
+                        <!--<img src="../images/pointer_image.png" width="100" height="100"></img>-->
+                    </div>
+
+                </div>
+            </div>
+        </section>
+        <section class="mdl-layout__tab-panel" id="chrome-tabs-tab">
+            <div class="page-content">
+                <div id="AddNewGroup">
+                    <div class="search-filter">
+                        <i class="material-icons">search</i>
+                        <input class="group-name" type="text" maxlength="100" placeholder="Search" id="tabs-filter">
+                    </div>
+
+                    <!--<table class="mdl-data-table mdl-js-data-table">-->
+                    <table class="mdl-data-table mdl-js-data-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <label id="select-all-tab-rows" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect " >
+                                        <input type="checkbox"  class="mdl-checkbox__input" />
+                                    </label>
+                                </th>
+                                <th colspan="2" class="tab-text-head">Select all</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <!--<tr id="tab-template" class="tab-row" hidden="hidden">-->
+                            <!--<td>-->
+                                <!--<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect ">-->
+                                    <!--<input type="checkbox" class="mdl-checkbox__input" />-->
+                                <!--</label>-->
+                            <!--</td>-->
+                            <!--<td class="tab-image-wrap">-->
+                                <!--&lt;!&ndash; <div class="image-checkbox check"> &ndash;&gt;-->
+                                <!--<img class="tab-image"/>-->
+                                <!--&lt;!&ndash; </div> &ndash;&gt;-->
+                            <!--</td>-->
+                            <!--<td class="tab-text">-->
+                            <!--</td>-->
+                            <!--<input type="hidden" class="tab-url"/>-->
+                        <!--</tr>-->
+                        <tbody id="tab-list">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+    <div class="mdl-layout" id="save-new-group-wrapper">
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label group-name-wrapper">
+            <input class="group-name mdl-textfield__input" type="text" maxlength="100" id="group-name">
+            <label class="mdl-textfield__label" for="group-name">Input Group Name</label>
+            <span class="mdl-textfield__error">Input is not a number!</span>
+            <input type="hidden" id="adding-new-link-to-group" value="false">
+        </div>
+        <button disabled
+                class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent save-new-group">
+            Save Group
+        </button>
+    </div>
+</div>
+</body>
+</html>
